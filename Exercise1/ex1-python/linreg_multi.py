@@ -37,4 +37,4 @@ theta = normalizedCost(X_norm,y)
 X_test = normalizeParam(pd.DataFrame([[1650,3]]))
 X_test.insert(0,None,1)
 
-print(f"The price for a house with 1650 square feet area and 3 bedrooms is : ${predict(X_test,theta)}")
+print(f"The price for a house with 1650 square feet area and 3 bedrooms is : ${float(predict(X_test,theta)):.2f}")
