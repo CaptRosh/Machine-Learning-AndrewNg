@@ -88,7 +88,7 @@ num_iters = 400;
 % Init Theta and Run Gradient Descent 
 theta = zeros(3, 1);
 [theta, J_history] = gradientDescentMulti(X, y, theta, alpha, num_iters);
-
+J_history
 % Plot the convergence graph
 figure;
 plot(1:numel(J_history), J_history, '-b', 'LineWidth', 2);
