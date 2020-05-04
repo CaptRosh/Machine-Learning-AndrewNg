@@ -28,6 +28,12 @@ def accuracy(X,y,theta):
         if prediction[i] == y[i]:
             true += 1
     return true/len(y)
+
+def plotDecisionBoundary(X,theta):
+    plot_x = np.array([np.min(X[:,2])-2, np.max(X[:,2])+2])
+    plot_y = -1/theta[2] * (theta[1]*plot_x + theta[0])
+    plt.plot(plot_x,plot_y)
+
 df = pd.read_csv("ex2data1.txt",header=None)
 
 Xdf = df[[0,1]]
@@ -78,4 +84,5 @@ print(f"Expected value: 0.775 +/- 0.002\n")
 print(f"Model Accuracy: {accuracy(X,y,test_theta)*100}%")
 print(f"Expected Accuracy: 89%")
 
+plotDecisionBoundary(X,op_theta)
 plt.show()
