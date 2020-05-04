@@ -21,7 +21,7 @@ htheta = sigmoid(X * theta);
 
 J = -1/m * (y' * log(htheta) + (1 - y') * log(1 - htheta));
 
-grad = 1/m * (theta - y)' * X;
+grad = (1/m) * (htheta - y)' * X;
 
 % =============================================================
 
