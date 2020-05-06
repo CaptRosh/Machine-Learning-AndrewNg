@@ -18,9 +18,11 @@ def featureMap(X1,X2):
             out = np.append(out,((X1**(i-j)) * X2**j).reshape(m,1),axis=1)
     return out
 
-def costFuncReg(theta,X,y,lambda_val):
+def costFuncReg(theta,X,y,lambda_val,fmin):
     h_theta = sigmoid(np.dot(X,theta))
     J = -1/len(y) * (np.dot((y.T),(np.log(h_theta))) + np.dot((1-y.T),(np.log(1-h_theta)))) + (lambda_val/(2*len(y)) * np.dot(theta[1:].T,theta[1:]))
+    if not fmin:
+        theta[0] = 0
     grad = 1/len(y) * (np.dot((h_theta - y).T,X)) + (lambda_val/len(y) * theta.T)
     return J,grad
 
@@ -30,11 +32,8 @@ def predict(X,theta):
 def accuracy(X,y,theta):
     prediction = predict(theta,X)
     true = 0
+    prediction = np.where(prediction>=0.5,1,0)
     for i in range(len(y)):
-        if prediction[i] >= 0.5:
-            prediction[i] = 1
-        else:
-            prediction[i] = 0
         if prediction[i] == y[i]:
             true += 1
     return true/len(y)
@@ -78,7 +77,7 @@ row,col = X_map.shape
 init_lambda_val = 1
 init_theta = np.zeros([col,1])
 
-init_cost,init_grad = costFuncReg(init_theta,X_map,y,init_lambda_val)
+init_cost,init_grad = costFuncReg(init_theta,X_map,y,init_lambda_val,False)
 
 print(f"Cost at initial theta (zeros): {float(init_cost):.6f}")
 print(f"Expected cost (approx): 0.693")
@@ -100,18 +99,18 @@ print(f"""Gradient at initial theta (zeros) - first five values only:
 test_lambda_val = 10
 test_theta = np.ones([col,1])
 
-test_cost,test_grad = costFuncReg(test_theta,X_map,y,test_lambda_val)
+test_cost,test_grad = costFuncReg(test_theta,X_map,y,test_lambda_val,False)
 
 print(f"Cost at test theta (ones) (with lambda 10): {float(test_cost):.6f}")
 print(f"Expected cost (approx): 3.16")
-print(f"""Gradient at test theta (zeros) - first five values only:
+print(f"""Gradient at test theta (ones) - first five values only:
 {test_grad[0][0]:.6f}
 {test_grad[0][1]:.6f}
 {test_grad[0][2]:.6f}
 {test_grad[0][3]:.6f}
 {test_grad[0][4]:.6f}
 """)
-print(f"""Gradient at initial theta (zeros) - first five values only:
+print(f"""Gradient at test theta (ones) - first five values only:
 0.3460
 0.1614
 0.1948
@@ -119,7 +118,7 @@ print(f"""Gradient at initial theta (zeros) - first five values only:
 0.0922
 \n""")
 
-op_theta = op.fmin_tnc(func=costFuncReg,x0=init_theta.flatten(),args=(X_map,y.flatten(),init_lambda_val),disp=0)[0]
+op_theta = op.fmin_tnc(func=costFuncReg,x0=init_theta.flatten(),args=(X_map,y.flatten(),init_lambda_val,True),disp=0)[0]
 
 print(f"Train Accuracy: {accuracy(X_map,y,op_theta)*100:.2f}%")
 print(f"Expected accuracy (with lambda = 1): 83.1 (approx)")
