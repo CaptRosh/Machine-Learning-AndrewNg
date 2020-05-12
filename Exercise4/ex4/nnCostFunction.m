@@ -63,23 +63,53 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 
+#ForwProp
 
+X = [ones(size(X,1),1) X];
+%Theta1 = (no. of units in next layer(without bias) x no. units in this layer + bias)
+a2 = sigmoid(Theta1 * X');
+%a2 is (no. of units in next layer(without bias) * no. of training samples)
+a2 = [ones(m,1) a2']; 
+%a2 transposed to make it appropriate 
+h_theta = sigmoid(Theta2 * a2'); 
 
+y_new = zeros(num_labels,m);
+for k = 1:m
+    y_new(y(k),k) = 1;
+end
 
+J = -1/m * sum(sum(y_new .* log(h_theta) + (1-y_new).*(log(1-h_theta))));
 
+t1 = Theta1(:,2:end);
+t2 = Theta2(:,2:end);
 
+reg = lambda/(2*m) * (sum(sum(t1.^2)) + sum(sum(t2.^2)));
 
+J = J + reg;
 
+#BackProp
 
+for a = 1:m
+    a1 = X(a,:)';
+    a2 = sigmoid(Theta1 * a1);
+    a2 = [1;a2];
+    a3 = sigmoid(Theta2 * a2);
 
+    delta3  = a3 - y_new(:,a);
+    delta2 = Theta2' * delta3 .* sigmoidGradient([1; Theta1 * a1]);
 
+    delta2 = delta2(2:end);
 
+    Theta2_grad = Theta2_grad + (delta3 * a2');
+    Theta1_grad = Theta1_grad + (delta2 * a1');
 
+end
 
+Theta1_grad = 1/m * Theta1_grad;
+Theta2_grad = 1/m * Theta2_grad;
 
-
-
-
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda/m * Theta1(:,2:end));
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda/m * Theta2(:,2:end));
 % -------------------------------------------------------------
 
 % =========================================================================
