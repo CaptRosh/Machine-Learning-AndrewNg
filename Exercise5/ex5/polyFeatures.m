@@ -17,7 +17,7 @@ X_poly = zeros(numel(X), p);
 m = size(X,1);
 
 for k = 1:m
-    ply = zeros(p,1);
+    poly = zeros(p,1);
     for a = 1:p
         poly(a) = X(k) .^ a ;
 
